@@ -4,6 +4,11 @@ node_modules/
 # Scripts with secrets
 scripts/
 
+# Environment variables (API keys)
+.env
+.env.local
+.env.production
+
 # Expo
 .expo/
 dist/
@@ -27,11 +32,6 @@ ios/
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-
-# env files
-.env
-.env.local
-.env.production
 
 # OS
 .DS_Store
@@ -57,3 +57,8 @@ logs/
 # Firebase
 firebase-debug.log
 firestore-debug.log
+
+# Claude/AI
+.claude/
+AGENTS.md
+CLAUDE.md

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { Card, Button } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { subscribeToArticles } from '../services/firestoreService';
 
@@ -53,42 +53,37 @@ export default function ArticulosScreen({ navigation }) {
         style={styles.articleCard}
       >
         <Card.Content style={styles.articleContent}>
-          <View style={styles.articleHeader}>
-            <Text style={styles.articleName}>
-              {article.nombre}
-            </Text>
-            <View style={[styles.stockBadge, { backgroundColor: stockColor }]}>
-              <Text style={styles.stockText}>
-                {article.stock} disp.
+          <TouchableOpacity 
+            style={styles.articleInfo}
+            onPress={() => navigation.navigate('ArticleDetail', { article })}
+          >
+            <View style={styles.articleHeader}>
+              <Text style={styles.articleName}>
+                {article.nombre}
               </Text>
+              <View style={[styles.stockBadge, { backgroundColor: stockColor }]}>
+                <Text style={styles.stockText}>
+                  {article.stock} disp.
+                </Text>
+              </View>
             </View>
-          </View>
+            
+            <Text style={styles.articleCategory}>
+              {article.categoria}
+            </Text>
+          </TouchableOpacity>
           
-          <Text style={styles.articleCategory}>
-            {article.categoria}
-          </Text>
-          
-          <Text style={styles.articleDescription}>
-            {article.descripcion || 'Descripción'}
-          </Text>
-          
-          <Button
-            mode="contained"
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: article.stock === 0 ? '#DEE4E0' : '#256B42' }]}
             onPress={() => navigation.navigate('LoanRequest', { article })}
             disabled={article.stock === 0}
-            style={[
-              styles.requestButton, 
-              { backgroundColor: article.stock === 0 ? '#DEE4E0' : '#256B42' }
-            ]}
-            labelStyle={[
-              styles.requestButtonText, 
-              { color: article.stock === 0 ? '#3E4941' : '#FEFFFE' }
-            ]}
-            contentStyle={styles.requestButtonContent}
-            theme={{ roundness: 28 }}
           >
-            Solicitar préstamo
-          </Button>
+            <MaterialCommunityIcons 
+              name="plus" 
+              size={24} 
+              color={article.stock === 0 ? '#3E4941' : '#FEFFFE'} 
+            />
+          </TouchableOpacity>
         </Card.Content>
       </Card>
     );
@@ -227,13 +222,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#E4EAE5',
   },
   articleContent: {
-    paddingVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  articleInfo: {
+    flex: 1,
   },
   articleHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   articleName: {
     fontSize: 18,
@@ -254,24 +255,14 @@ const styles = StyleSheet.create({
   articleCategory: {
     fontSize: 15,
     color: '#3E4941',
-    marginBottom: 8,
   },
-  articleDescription: {
-    fontSize: 16,
-    color: '#3E4941',
-    marginBottom: 16,
-    lineHeight: 24,
-  },
-  requestButton: {
-    height: 56,
+  addButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
-  },
-  requestButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  requestButtonContent: {
-    height: 56,
+    alignItems: 'center',
+    marginLeft: 12,
   },
   bottomSpacing: {
     height: 100,

@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScreen from "../screens/homeScreen";
 import ProfileScreen from "../screens/profileScreen";
 import ArticulosScreen from "../screens/articulosScreen";
+import ArticleDetailScreen from "../screens/articleDetailScreen";
 import LoanRequestScreen from "../screens/loanRequestScreen";
 
 const Stack = createNativeStackNavigator();
@@ -79,6 +80,7 @@ export default function MainStack() {
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen name="MainTabs" component={HomeTabs} />
+      <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
       <Stack.Screen name="LoanRequest" component={LoanRequestScreen} />
     </Stack.Navigator>
   );
