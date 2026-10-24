@@ -3,12 +3,15 @@ import { View, StyleSheet, Text, ScrollView, TouchableOpacity, TextInput } from 
 import { Card } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { subscribeToArticles } from '../services/firestoreService';
+import Skeleton from '../components/Skeleton';
+import Gloss from '../components/Gloss';
 
 export default function ArticulosScreen({ navigation }) {
   const [articles, setArticles] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [loading, setLoading] = useState(true);
 
   const categories = ['Todos', 'Herramientas', 'Dispositivos', 'Cables', 'Redes'];
 
@@ -16,6 +19,7 @@ export default function ArticulosScreen({ navigation }) {
     const unsubscribe = subscribeToArticles((articlesData) => {
       setArticles(articlesData);
       setFilteredArticles(articlesData);
+      setLoading(false);
     });
     
     return () => unsubscribe();
@@ -53,6 +57,7 @@ export default function ArticulosScreen({ navigation }) {
         style={styles.articleCard}
       >
         <Card.Content style={styles.articleContent}>
+          <Gloss tone="light" />
           <TouchableOpacity 
             style={styles.articleInfo}
             onPress={() => navigation.navigate('ArticleDetail', { article })}
@@ -98,7 +103,7 @@ export default function ArticulosScreen({ navigation }) {
       </View>
 
       <View style={styles.searchContainer}>
-        <MaterialCommunityIcons name="magnify" size={20} color="#3E4941" />
+        <MaterialCommunityIcons name="magnify" size={20} color="#256B42" />
         <TextInput
           placeholder="Buscar"
           placeholderTextColor="#6E7A71"
@@ -119,14 +124,14 @@ export default function ArticulosScreen({ navigation }) {
             onPress={() => setSelectedCategory(category)}
             style={[
               styles.categoryChip,
-              { 
-                backgroundColor: selectedCategory === category ? '#256B42' : '#EAEFEB'
-              }
+              selectedCategory === category 
+                ? styles.categoryChipActive 
+                : styles.categoryChipInactive
             ]}
           >
             <Text style={[
               styles.categoryText,
-              { color: selectedCategory === category ? '#FEFFFE' : '#181C1A' }
+              { color: selectedCategory === category ? '#FEFFFE' : '#256B42' }
             ]}>
               {category}
             </Text>
@@ -135,12 +140,24 @@ export default function ArticulosScreen({ navigation }) {
       </ScrollView>
 
       <View style={styles.articlesContainer}>
-        {filteredArticles.length === 0 ? (
+        {loading ? (
+          [0, 1, 2].map((i) => (
+            <View key={i} style={styles.articleCard}>
+              <View style={styles.skeletonRow}>
+                <View style={{ flex: 1 }}>
+                  <Skeleton width="70%" height={20} borderRadius={8} style={{ marginBottom: 8 }} />
+                  <Skeleton width="40%" height={14} borderRadius={6} />
+                </View>
+                <Skeleton width={64} height={32} borderRadius={16} />
+              </View>
+            </View>
+          ))
+        ) : filteredArticles.length === 0 ? (
           <View style={styles.emptyCard}>
             <MaterialCommunityIcons 
               name="package-variant" 
               size={48} 
-              color="#3E4941" 
+              color="#256B42" 
             />
             <Text style={styles.emptyText}>
               No se encontraron artículos
@@ -167,23 +184,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerTitle: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#181C1A',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E4EAE5',
+    backgroundColor: 'rgba(255,255,255,0.75)',
     marginHorizontal: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.5)',
   },
   searchInput: {
     flex: 1,
     marginLeft: 12,
+    fontFamily: 'Inter_400Regular',
     fontSize: 16,
     color: '#181C1A',
   },
@@ -198,7 +219,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 8,
   },
+  categoryChipActive: {
+    backgroundColor: '#256B42',
+  },
+  categoryChipInactive: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#256B42',
+  },
   categoryText: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -206,26 +236,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   emptyCard: {
-    backgroundColor: '#E4EAE5',
-    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderRadius: 24,
     alignItems: 'center',
     paddingVertical: 48,
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.3)',
+    overflow: 'hidden',
   },
   emptyText: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 14,
     color: '#3E4941',
     marginTop: 12,
   },
   articleCard: {
     marginBottom: 16,
-    borderRadius: 28,
-    backgroundColor: '#E4EAE5',
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.3)',
+    overflow: 'hidden',
   },
   articleContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
+  },
+  skeletonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
   },
   articleInfo: {
     flex: 1,
@@ -237,22 +280,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   articleName: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#181C1A',
     flex: 1,
   },
   stockBadge: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 28,
+    borderRadius: 20,
   },
   stockText: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 13,
     color: '#FEFFFE',
     fontWeight: '500',
   },
   articleCategory: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 15,
     color: '#3E4941',
   },

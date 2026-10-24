@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Gloss from "../components/Gloss";
 
 export default function ArticleDetailScreen({ navigation, route }) {
   const { article } = route.params || {};
@@ -16,6 +17,7 @@ export default function ArticleDetailScreen({ navigation, route }) {
       <Text style={styles.title}>{article?.nombre || "Detalle"}</Text>
 
       <View style={styles.card}>
+        <Gloss tone="light" />
         <View style={styles.cardHandle} />
 
         <View style={styles.field}>
@@ -41,7 +43,7 @@ export default function ArticleDetailScreen({ navigation, route }) {
         <View style={styles.field}>
           <Text style={styles.fieldLabel}>Imagen</Text>
           <View style={styles.imagePlaceholder}>
-            <MaterialCommunityIcons name="image" size={48} color="#6E7A71" />
+            <MaterialCommunityIcons name="image" size={48} color="#256B42" />
           </View>
         </View>
       </View>
@@ -63,44 +65,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5FBF6",
   },
-  header: {
-    paddingTop: 60,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
   title: {
+    fontFamily: "Inter_700Bold",
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#181C1A",
     paddingHorizontal: 16,
+    marginTop: 60,
     marginBottom: 16,
   },
   card: {
     marginHorizontal: 16,
-    backgroundColor: "#E4EAE5",
-    borderRadius: 28,
+    backgroundColor: "rgba(255,255,255,0.75)",
+    borderRadius: 24,
     padding: 24,
+    borderWidth: 1,
+    borderColor: "rgba(37,107,66,0.4)",
+    overflow: "hidden",
   },
   cardHandle: {
     width: 40,
     height: 4,
-    backgroundColor: "#6E7A71",
+    backgroundColor: "#256B42",
     borderRadius: 2,
     alignSelf: "center",
     marginBottom: 24,
   },
   field: {
     marginBottom: 20,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#BDCAC0",
   },
   fieldLabel: {
+    fontFamily: "Inter_700Bold",
     fontSize: 16,
-    fontWeight: "600",
-    color: "#181C1A",
+    fontWeight: "700",
+    color: "#256B42",
     marginBottom: 4,
   },
   fieldValue: {
+    fontFamily: "Inter_400Regular",
     fontSize: 14,
-    color: "#3E4941",
+    color: "#181C1A",
     lineHeight: 20,
   },
   imagePlaceholder: {
@@ -111,6 +118,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 8,
+    borderWidth: 2,
+    borderColor: "#256B42",
   },
   backButton: {
     position: "absolute",

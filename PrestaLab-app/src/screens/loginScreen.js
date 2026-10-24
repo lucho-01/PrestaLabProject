@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { loginUser } from '../services/authService';
+import Gloss from '../components/Gloss';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -12,15 +12,24 @@ export default function LoginScreen({ navigation }) {
   const [error, setError] = useState('');
 
   const handleSignIn = async () => {
-    if (!email || !password) {
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+    
+    if (!cleanEmail || !cleanPassword) {
       setError('Por favor completa todos los campos');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setError('Ingresa un correo electrónico válido');
       return;
     }
     
     setLoading(true);
     setError('');
     
-    const result = await loginUser(email, password);
+    const result = await loginUser(cleanEmail, cleanPassword);
     
     if (!result.success) {
       setError(result.error);
@@ -36,6 +45,7 @@ export default function LoginScreen({ navigation }) {
       </Text>
       
       <View style={styles.formContainer}>
+        <Gloss tone="light" />
         <Text style={styles.label}>
           Correo
         </Text>
@@ -50,7 +60,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
         
         <Text style={styles.label}>
@@ -72,7 +82,7 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
         
         {error ? (
@@ -83,10 +93,10 @@ export default function LoginScreen({ navigation }) {
           mode="contained"
           onPress={handleSignIn}
           disabled={loading}
-          style={[styles.button, { backgroundColor: '#256B42' }]}
-          labelStyle={[styles.buttonLabel, { color: '#FEFFFE' }]}
+          style={styles.button}
+          labelStyle={styles.buttonLabel}
           contentStyle={styles.buttonContent}
-          theme={{ roundness: 28 }}
+          theme={{ roundness: 20 }}
         >
           {loading ? (
             <ActivityIndicator color="#FEFFFE" />
@@ -117,22 +127,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FBF6',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 32,
+    fontWeight: '700',
     color: '#181C1A',
     marginBottom: 32,
   },
   formContainer: {
     width: 336,
-    height: 444,
-    borderRadius: 28,
+    borderRadius: 24,
     padding: 24,
     justifyContent: 'center',
-    backgroundColor: '#E4EAE5',
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.45)',
+    overflow: 'hidden',
   },
   label: {
-    fontSize: 19,
-    color: '#181C1A',
+    fontFamily: 'Inter_500Medium',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#256B42',
     marginBottom: 8,
     marginLeft: 4,
   },
@@ -141,7 +156,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   error: {
-    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
     color: '#B3261E',
     marginBottom: 16,
     textAlign: 'center',
@@ -150,10 +166,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     height: 56,
     justifyContent: 'center',
+    backgroundColor: '#256B42',
   },
   buttonLabel: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: '#FEFFFE',
   },
   buttonContent: {
     height: 56,
@@ -162,7 +181,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   registerText: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 16,
+    fontWeight: '500',
     color: '#256B42',
   },
 });

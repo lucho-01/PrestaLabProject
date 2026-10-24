@@ -1,7 +1,9 @@
 import React from "react";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import HomeScreen from "../screens/homeScreen";
 import ProfileScreen from "../screens/profileScreen";
@@ -17,21 +19,59 @@ const screenOptions = {
   animation: "slide_from_right",
 };
 
+function TabBarButton({ children, onPress, onLongPress, style, ...rest }) {
+  const isActive = !!rest["aria-selected"];
+
+  return (
+    <TouchableOpacity
+      {...rest}
+      onPress={onPress}
+      onLongPress={onLongPress}
+      activeOpacity={0.7}
+      style={[styles.tabTouchable, style]}
+    >
+      <View style={[styles.tabPill, isActive && styles.tabPillFocused]}>
+        {children}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function TabBarBackground() {
+  return (
+    <LinearGradient
+      colors={["rgba(255,255,255,0.97)", "rgba(238,246,240,0.92)"]}
+      style={{ flex: 1 }}
+    />
+  );
+}
+
 function HomeTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#256B42",
-        tabBarInactiveTintColor: "#3E4941",
+        tabBarButton: (props) => <TabBarButton {...props} />,
+        tabBarActiveTintColor: "#FEFFFE",
+        tabBarInactiveTintColor: "#256B42",
+        tabBarBackground: TabBarBackground,
         tabBarStyle: {
-          backgroundColor: "#EAEFEB",
-          borderTopColor: "#BDCAC0",
-          height: 80,
+          backgroundColor: "transparent",
+          borderTopColor: "rgba(37,107,66,0.18)",
+          borderTopWidth: 1,
+          height: 84,
           paddingBottom: 20,
+          paddingTop: 8,
+          borderRadius: 24,
+          marginHorizontal: 12,
+          marginBottom: 12,
+          position: "absolute",
+          elevation: 8,
+          overflow: "hidden",
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontFamily: "Inter_500Medium",
+          fontSize: 11,
           fontWeight: "500",
         },
       }}
@@ -75,6 +115,31 @@ function HomeTabs() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  tabTouchable: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabPill: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    minWidth: 72,
+    minHeight: 56,
+  },
+  tabPillFocused: {
+    backgroundColor: "#256B42",
+    shadowColor: "#256B42",
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+});
 
 export default function MainStack() {
   return (

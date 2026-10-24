@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { registerUser } from '../services/authService';
+import Gloss from '../components/Gloss';
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
@@ -15,15 +15,37 @@ export default function RegisterScreen({ navigation }) {
   const [error, setError] = useState('');
 
   const handleSignUp = async () => {
-    if (!name || !lastName || !phone || !email || !password) {
+    const cleanName = name.trim();
+    const cleanLastName = lastName.trim();
+    const cleanPhone = phone.trim();
+    const cleanEmail = email.trim();
+    
+    if (!cleanName || !cleanLastName || !cleanPhone || !cleanEmail || !password) {
       setError('Por favor completa todos los campos');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setError('Ingresa un correo electrónico válido');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    
+    const phoneRegex = /^[0-9+\-\s()]{7,15}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setError('Ingresa un teléfono válido (mínimo 7 dígitos)');
       return;
     }
     
     setLoading(true);
     setError('');
     
-    const result = await registerUser(email, password, name, lastName, phone);
+    const result = await registerUser(cleanEmail, password, cleanName, cleanLastName, cleanPhone);
     
     if (!result.success) {
       setError(result.error);
@@ -40,6 +62,7 @@ export default function RegisterScreen({ navigation }) {
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
+          <Gloss tone="light" />
           <Text style={styles.label}>
             Nombre
           </Text>
@@ -52,7 +75,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             outlineColor="#6E7A71"
             activeOutlineColor="#256B42"
-            theme={{ roundness: 16 }}
+            theme={{ roundness: 8 }}
           />
           
           <Text style={styles.label}>
@@ -67,7 +90,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             outlineColor="#6E7A71"
             activeOutlineColor="#256B42"
-            theme={{ roundness: 16 }}
+            theme={{ roundness: 8 }}
           />
           
           <Text style={styles.label}>
@@ -83,7 +106,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             outlineColor="#6E7A71"
             activeOutlineColor="#256B42"
-            theme={{ roundness: 16 }}
+            theme={{ roundness: 8 }}
           />
           
           <Text style={styles.label}>
@@ -100,7 +123,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             outlineColor="#6E7A71"
             activeOutlineColor="#256B42"
-            theme={{ roundness: 16 }}
+            theme={{ roundness: 8 }}
           />
           
           <Text style={styles.label}>
@@ -122,7 +145,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.input}
             outlineColor="#6E7A71"
             activeOutlineColor="#256B42"
-            theme={{ roundness: 16 }}
+            theme={{ roundness: 8 }}
           />
           
           {error ? (
@@ -133,10 +156,10 @@ export default function RegisterScreen({ navigation }) {
             mode="contained"
             onPress={handleSignUp}
             disabled={loading}
-            style={[styles.button, { backgroundColor: '#256B42' }]}
-            labelStyle={[styles.buttonLabel, { color: '#FEFFFE' }]}
+            style={styles.button}
+            labelStyle={styles.buttonLabel}
             contentStyle={styles.buttonContent}
-            theme={{ roundness: 28 }}
+            theme={{ roundness: 20 }}
           >
             {loading ? (
               <ActivityIndicator color="#FEFFFE" />
@@ -167,8 +190,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FBF6',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 32,
+    fontWeight: '700',
     color: '#181C1A',
     marginBottom: 24,
   },
@@ -178,14 +202,18 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: 336,
-    height: 584,
-    borderRadius: 28,
+    borderRadius: 24,
     padding: 24,
-    backgroundColor: '#E4EAE5',
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.45)',
+    overflow: 'hidden',
   },
   label: {
-    fontSize: 19,
-    color: '#181C1A',
+    fontFamily: 'Inter_500Medium',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#256B42',
     marginBottom: 8,
     marginLeft: 4,
   },
@@ -194,7 +222,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   error: {
-    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 13,
     color: '#B3261E',
     marginBottom: 16,
     textAlign: 'center',
@@ -203,10 +232,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     height: 56,
     justifyContent: 'center',
+    backgroundColor: '#256B42',
   },
   buttonLabel: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: '#FEFFFE',
   },
   buttonContent: {
     height: 56,
@@ -215,7 +247,9 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   loginText: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 16,
+    fontWeight: '500',
     color: '#256B42',
   },
 });

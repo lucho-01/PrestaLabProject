@@ -1,12 +1,14 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { PaperProvider, ActivityIndicator as PaperActivityIndicator, MD3LightTheme } from "react-native-paper";
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_700Bold } from "@expo-google-fonts/inter";
 import { UserProvider, useUser } from "./src/contexts/userContext";
 import AuthStack from "./src/navegations/authStack";
 import MainStack from "./src/navegations/mainStack";
 
 const theme = {
   ...MD3LightTheme,
+  roundness: 24,
   colors: {
     ...MD3LightTheme.colors,
     primary: '#256B42',
@@ -32,6 +34,22 @@ const theme = {
     errorContainer: '#F9DEDC',
     onErrorContainer: '#410E0B',
   },
+  fonts: {
+    ...MD3LightTheme.fonts,
+    regular: { fontFamily: 'Inter_400Regular', fontWeight: '400' },
+    medium: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    mediumLarge: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    bold: { fontFamily: 'Inter_700Bold', fontWeight: '700' },
+    titleLarge: { fontFamily: 'Inter_700Bold', fontWeight: '700' },
+    titleMedium: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    titleSmall: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    labelLarge: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    labelMedium: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    labelSmall: { fontFamily: 'Inter_500Medium', fontWeight: '500' },
+    bodyLarge: { fontFamily: 'Inter_400Regular', fontWeight: '400' },
+    bodyMedium: { fontFamily: 'Inter_400Regular', fontWeight: '400' },
+    bodySmall: { fontFamily: 'Inter_400Regular', fontWeight: '400' },
+  },
 };
 
 function AppContent() {
@@ -53,6 +71,20 @@ function AppContent() {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: '#F5FBF6' }]}>
+        <PaperActivityIndicator size="large" color="#256B42" />
+      </View>
+    );
+  }
+
   return (
     <PaperProvider theme={theme}>
       <UserProvider>

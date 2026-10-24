@@ -1,20 +1,21 @@
-import { auth } from '../config/fbConfig';
+import { auth, db } from '../config/fbConfig';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   updateProfile,
 } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 const errorMessages = {
-  'auth/user-not-found': 'No existe una cuenta con este correo.',
-  'auth/wrong-password': 'Contraseña incorrecta.',
   'auth/invalid-email': 'El correo electrónico no es válido.',
   'auth/email-already-in-use': 'Ya existe una cuenta con este correo.',
   'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
   'auth/too-many-requests': 'Demasiados intentos. Intenta más tarde.',
   'auth/network-request-failed': 'Error de conexión. Verifica tu internet.',
-  'auth/invalid-credential': 'Credenciales inválidas. Verifica tus datos.',
+  'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+  'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Error de configuración de la app. Contacta al administrador.',
+  'auth/operation-not-allowed': 'El registro con correo no está habilitado.',
 };
 
 const getErrorMessage = (errorCode) => {
@@ -23,15 +24,24 @@ const getErrorMessage = (errorCode) => {
 
 export const registerUser = async (email, password, name, lastName, phone) => {
   try {
+    const cleanEmail = email.trim().toLowerCase();
+    
     const userCredential = await createUserWithEmailAndPassword(
       auth,
-      email,
+      cleanEmail,
       password
     );
     
     await updateProfile(userCredential.user, {
-      displayName: `${name} ${lastName}`,
-      phoneNumber: phone,
+      displayName: `${name.trim()} ${lastName.trim()}`,
+    });
+    
+    await setDoc(doc(db, 'usuarios', userCredential.user.uid), {
+      nombre: name.trim(),
+      apellido: lastName.trim(),
+      telefono: phone.trim(),
+      email: cleanEmail,
+      createdAt: new Date(),
     });
     
     return { success: true, user: userCredential.user };
@@ -45,7 +55,8 @@ export const registerUser = async (email, password, name, lastName, phone) => {
 
 export const loginUser = async (email, password) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const cleanEmail = email.trim().toLowerCase();
+    const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
     return { success: true, user: userCredential.user };
   } catch (error) {
     return { 

@@ -4,6 +4,7 @@ import { TextInput, Button, Checkbox } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/userContext';
 import { createLoan } from '../services/firestoreService';
+import Gloss from '../components/Gloss';
 
 export default function LoanRequestScreen({ navigation, route }) {
   const { user } = useUser();
@@ -70,11 +71,12 @@ export default function LoanRequestScreen({ navigation, route }) {
 
       {article && (
         <View style={styles.articlePreview}>
+          <Gloss tone="light" />
           <View style={styles.articleImage}>
             <MaterialCommunityIcons 
               name="package-variant" 
               size={32} 
-              color="#3E4941" 
+              color="#256B42" 
             />
           </View>
           <Text style={styles.articleName}>
@@ -97,27 +99,27 @@ export default function LoanRequestScreen({ navigation, route }) {
           <TouchableOpacity
             style={[
               styles.loanTypeButton,
-              { 
-                backgroundColor: loanType === 'interno' ? '#ABF2C1' : '#EAEFEB',
-                borderColor: loanType === 'interno' ? '#256B42' : '#6E7A71',
-              }
+              loanType === 'interno' 
+                ? styles.loanTypeButtonActive 
+                : styles.loanTypeButtonInactive
             ]}
             onPress={() => setLoanType('interno')}
           >
+            {loanType === 'interno' ? <Gloss /> : <Gloss tone="light" />}
             <MaterialCommunityIcons 
               name="school" 
               size={24} 
-              color={loanType === 'interno' ? '#02210E' : '#3E4941'} 
+              color={loanType === 'interno' ? '#FEFFFE' : '#256B42'} 
             />
             <Text style={[
               styles.loanTypeTitle, 
-              { color: loanType === 'interno' ? '#02210E' : '#181C1A' }
+              { color: loanType === 'interno' ? '#FEFFFE' : '#181C1A' }
             ]}>
               Interno
             </Text>
             <Text style={[
               styles.loanTypeDescription, 
-              { color: loanType === 'interno' ? '#02210E' : '#3E4941' }
+              { color: loanType === 'interno' ? '#ABF2C1' : '#3E4941' }
             ]}>
               Dentro del laboratorio
             </Text>
@@ -126,27 +128,27 @@ export default function LoanRequestScreen({ navigation, route }) {
           <TouchableOpacity
             style={[
               styles.loanTypeButton,
-              { 
-                backgroundColor: loanType === 'externo' ? '#ABF2C1' : '#EAEFEB',
-                borderColor: loanType === 'externo' ? '#256B42' : '#6E7A71',
-              }
+              loanType === 'externo' 
+                ? styles.loanTypeButtonActive 
+                : styles.loanTypeButtonInactive
             ]}
             onPress={() => setLoanType('externo')}
           >
+            {loanType === 'externo' ? <Gloss /> : <Gloss tone="light" />}
             <MaterialCommunityIcons 
               name="home" 
               size={24} 
-              color={loanType === 'externo' ? '#02210E' : '#3E4941'} 
+              color={loanType === 'externo' ? '#FEFFFE' : '#256B42'} 
             />
             <Text style={[
               styles.loanTypeTitle, 
-              { color: loanType === 'externo' ? '#02210E' : '#181C1A' }
+              { color: loanType === 'externo' ? '#FEFFFE' : '#181C1A' }
             ]}>
               Externo
             </Text>
             <Text style={[
               styles.loanTypeDescription, 
-              { color: loanType === 'externo' ? '#02210E' : '#3E4941' }
+              { color: loanType === 'externo' ? '#ABF2C1' : '#3E4941' }
             ]}>
               Fuera de la institución
             </Text>
@@ -166,7 +168,7 @@ export default function LoanRequestScreen({ navigation, route }) {
           style={styles.input}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
       </View>
 
@@ -182,7 +184,7 @@ export default function LoanRequestScreen({ navigation, route }) {
           style={styles.input}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
       </View>
 
@@ -198,7 +200,7 @@ export default function LoanRequestScreen({ navigation, route }) {
           style={styles.input}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
       </View>
 
@@ -216,7 +218,7 @@ export default function LoanRequestScreen({ navigation, route }) {
           style={[styles.input, styles.textArea]}
           outlineColor="#6E7A71"
           activeOutlineColor="#256B42"
-          theme={{ roundness: 16 }}
+          theme={{ roundness: 8 }}
         />
       </View>
 
@@ -228,7 +230,7 @@ export default function LoanRequestScreen({ navigation, route }) {
           <MaterialCommunityIcons 
             name="camera" 
             size={24} 
-            color="#3E4941" 
+            color="#256B42" 
           />
           <Text style={styles.photoUploadText}>
             Tomar foto del artículo antes del préstamo
@@ -255,10 +257,10 @@ export default function LoanRequestScreen({ navigation, route }) {
         mode="contained"
         onPress={handleRequestLoan}
         disabled={loading || !termsAccepted}
-        style={[styles.submitButton, { backgroundColor: '#256B42' }]}
-        labelStyle={[styles.submitButtonText, { color: '#FEFFFE' }]}
+        style={styles.submitButton}
+        labelStyle={styles.submitButtonText}
         contentStyle={styles.submitButtonContent}
-        theme={{ roundness: 28 }}
+        theme={{ roundness: 20 }}
       >
         {loading ? 'Procesando...' : 'Confirmar Solicitud'}
       </Button>
@@ -282,41 +284,50 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   headerTitle: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#181C1A',
   },
   articlePreview: {
     marginHorizontal: 16,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 24,
     alignItems: 'center',
     marginBottom: 24,
-    backgroundColor: '#EAEFEB',
+    backgroundColor: 'rgba(255,255,255,0.75)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.45)',
+    overflow: 'hidden',
   },
   articleImage: {
     width: 80,
     height: 80,
-    borderRadius: 10,
+    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
     backgroundColor: '#DEE4E0',
+    borderWidth: 2,
+    borderColor: '#256B42',
   },
   articleName: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#181C1A',
     marginBottom: 4,
   },
   articleCategory: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: '#3E4941',
     marginBottom: 8,
   },
   articleStock: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#256B42',
   },
   formSection: {
@@ -324,9 +335,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 14,
-    fontWeight: '600',
-    color: '#181C1A',
+    fontWeight: '700',
+    color: '#256B42',
     marginBottom: 8,
   },
   loanTypeContainer: {
@@ -336,17 +348,28 @@ const styles = StyleSheet.create({
   loanTypeButton: {
     flex: 1,
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
     borderWidth: 2,
+    overflow: 'hidden',
+  },
+  loanTypeButtonActive: {
+    backgroundColor: '#256B42',
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  loanTypeButtonInactive: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(37,107,66,0.5)',
   },
   loanTypeTitle: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 8,
     marginBottom: 4,
   },
   loanTypeDescription: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 10,
     textAlign: 'center',
   },
@@ -359,12 +382,13 @@ const styles = StyleSheet.create({
   photoUpload: {
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 24,
     alignItems: 'center',
-    borderColor: '#6E7A71',
+    borderColor: '#256B42',
   },
   photoUploadText: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 11,
     color: '#3E4941',
     marginTop: 8,
@@ -376,12 +400,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   termsText: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 10,
     color: '#3E4941',
     flex: 1,
     marginTop: 8,
   },
   error: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: '#B3261E',
     marginHorizontal: 16,
@@ -392,10 +418,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     height: 56,
     justifyContent: 'center',
+    backgroundColor: '#256B42',
   },
   submitButtonText: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: '#FEFFFE',
   },
   submitButtonContent: {
     height: 56,

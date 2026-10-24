@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useUser } from '../contexts/userContext';
 import { subscribeToLoans } from '../services/firestoreService';
 import { logoutUser } from '../services/authService';
+import Gloss from '../components/Gloss';
 
 export default function ProfileScreen({ navigation }) {
   const { user } = useUser();
@@ -49,17 +50,19 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       <View style={styles.avatarContainer}>
-        {user?.photoURL ? (
-          <Avatar.Image 
-            size={200} 
-            source={{ uri: user?.photoURL }}
-            style={styles.avatar}
-          />
-        ) : (
-          <View style={[styles.avatarPlaceholder, styles.avatar]}>
-            <MaterialCommunityIcons name="account" size={80} color="#3E4941" />
-          </View>
-        )}
+        <View style={styles.avatarRing}>
+          {user?.photoURL ? (
+            <Avatar.Image 
+              size={184} 
+              source={{ uri: user?.photoURL }}
+              style={styles.avatar}
+            />
+          ) : (
+            <View style={[styles.avatarPlaceholder, styles.avatar]}>
+              <MaterialCommunityIcons name="account" size={80} color="#256B42" />
+            </View>
+          )}
+        </View>
         <TouchableOpacity style={styles.editButton}>
           <MaterialCommunityIcons name="pencil" size={20} color="#FEFFFE" />
         </TouchableOpacity>
@@ -70,6 +73,7 @@ export default function ProfileScreen({ navigation }) {
       </Text>
 
       <View style={styles.statsCard}>
+        <Gloss tone="light" />
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>
@@ -79,6 +83,7 @@ export default function ProfileScreen({ navigation }) {
               {stats.totalLoans}
             </Text>
           </View>
+          <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>
               Activos
@@ -87,6 +92,7 @@ export default function ProfileScreen({ navigation }) {
               {stats.activeLoans}
             </Text>
           </View>
+          <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>
               Sanciones
@@ -100,11 +106,12 @@ export default function ProfileScreen({ navigation }) {
 
       <Card style={styles.menuCard}>
         <Card.Content style={styles.menuContent}>
+          <Gloss tone="light" />
           <TouchableOpacity style={styles.menuItem}>
             <MaterialCommunityIcons 
               name="history" 
               size={24} 
-              color="#181C1A" 
+              color="#256B42" 
             />
             <View style={styles.menuTextContainer}>
               <Text style={styles.menuTitle}>
@@ -117,7 +124,7 @@ export default function ProfileScreen({ navigation }) {
             <MaterialCommunityIcons 
               name="chevron-right" 
               size={24} 
-              color="#3E4941" 
+              color="#256B42" 
             />
           </TouchableOpacity>
         </Card.Content>
@@ -125,11 +132,12 @@ export default function ProfileScreen({ navigation }) {
 
       <Card style={styles.menuCard}>
         <Card.Content style={styles.menuContent}>
+          <Gloss tone="light" />
           <TouchableOpacity style={styles.menuItem}>
             <MaterialCommunityIcons 
               name="chart-line" 
               size={24} 
-              color="#181C1A" 
+              color="#256B42" 
             />
             <View style={styles.menuTextContainer}>
               <Text style={styles.menuTitle}>
@@ -142,7 +150,7 @@ export default function ProfileScreen({ navigation }) {
             <MaterialCommunityIcons 
               name="chevron-right" 
               size={24} 
-              color="#3E4941" 
+              color="#256B42" 
             />
           </TouchableOpacity>
         </Card.Content>
@@ -169,12 +177,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#181C1A',
   },
   logoutText: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 14,
+    fontWeight: '500',
     color: '#B3261E',
   },
   avatarContainer: {
@@ -182,14 +193,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     position: 'relative',
   },
-  avatar: {
+  avatarRing: {
+    borderRadius: 100,
+    borderWidth: 4,
+    borderColor: '#256B42',
+    padding: 4,
     marginBottom: 8,
+  },
+  avatar: {
     backgroundColor: '#DEE4E0',
   },
   avatarPlaceholder: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 184,
+    height: 184,
+    borderRadius: 92,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -199,47 +216,63 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 48,
     height: 48,
-    borderRadius: 28,
+    borderRadius: 24,
     backgroundColor: '#256B42',
     justifyContent: 'center',
     alignItems: 'center',
   },
   userName: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#181C1A',
     textAlign: 'center',
     marginBottom: 24,
   },
   statsCard: {
     marginHorizontal: 16,
-    borderRadius: 28,
+    borderRadius: 24,
     marginBottom: 24,
-    backgroundColor: '#E4EAE5',
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.45)',
+    overflow: 'hidden',
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    alignItems: 'center',
     paddingVertical: 16,
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#256B42',
   },
   statLabel: {
-    fontSize: 16,
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
     color: '#3E4941',
     marginBottom: 4,
   },
   statValue: {
+    fontFamily: 'Inter_700Bold',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#181C1A',
   },
   menuCard: {
     marginHorizontal: 16,
     marginBottom: 12,
-    borderRadius: 20,
-    backgroundColor: '#DEE4E0',
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderWidth: 1,
+    borderColor: 'rgba(37,107,66,0.45)',
+    overflow: 'hidden',
   },
   menuContent: {
     paddingVertical: 8,
@@ -254,11 +287,13 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   menuTitle: {
+    fontFamily: 'Inter_500Medium',
     fontSize: 16,
     fontWeight: '500',
     color: '#181C1A',
   },
   menuSubtitle: {
+    fontFamily: 'Inter_400Regular',
     fontSize: 12,
     color: '#3E4941',
     marginTop: 2,
